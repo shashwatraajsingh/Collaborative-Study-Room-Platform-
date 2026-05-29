@@ -57,7 +57,7 @@ export const MembersPanel: React.FC<MembersPanelProps> = ({ room }) => {
   };
 
   return (
-    <aside className={styles.leftPanel} aria-label="Room members list">
+    <aside className={styles.sidebarSection} aria-label="Room details and members">
       <div className={styles.roomHeaderInfo}>
         <h2 className={styles.roomName}>{room.name}</h2>
         {room.description && <p className={styles.roomDescription}>{room.description}</p>}

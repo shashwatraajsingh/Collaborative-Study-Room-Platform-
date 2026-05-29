@@ -3,10 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth.store';
 import { useRoomStore } from '../../store/room.store';
 import { useSocket } from '../../hooks/useSocket';
-import { MembersPanel } from './panels/MembersPanel';
+import { SidebarPanel } from './panels/SidebarPanel';
 import { ChatPanel } from './panels/ChatPanel';
-import { SessionPanel } from './panels/SessionPanel';
 import { ReconnectBanner } from '../../components/ReconnectBanner';
+import { SessionTimer } from './components/SessionTimer';
 import api from '../../api/axios';
 import { Room, Message, StudySession, ApiResponse } from '../../types/api.types';
 import styles from './StudyRoom.module.css';
@@ -17,6 +17,7 @@ export const StudyRoom: React.FC = () => {
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const currentUser = useAuthStore((state) => state.user);
   const { setMessages, setActiveSession, clearRoomStore } = useRoomStore();
@@ -94,14 +95,26 @@ export const StudyRoom: React.FC = () => {
   return (
     <div className={styles.roomContainer} id={`study-room-${roomId}`}>
       <ReconnectBanner />
+      <div className={styles.topBarMobile}>
+        <button className={styles.hamburgerBtn} onClick={() => setSidebarOpen(true)}>☰ Menu</button>
+      </div>
       <div className={styles.roomContent}>
-        <MembersPanel room={room} />
-        <ChatPanel sendMessage={sendMessage} />
-        <SessionPanel
-          roomId={roomId}
-          startSession={startSession}
-          endSession={endSession}
-        />
+        <div className={`${styles.sidebarWrapper} ${isSidebarOpen ? styles.sidebarOpen : ''}`}>
+          <div className={styles.sidebarCloseHeader}>
+             <button className={styles.closeSidebarBtn} onClick={() => setSidebarOpen(false)}>✕ Close</button>
+          </div>
+          <SidebarPanel room={room} roomId={roomId} startSession={startSession} endSession={endSession} />
+        </div>
+        
+        <div className={styles.chatAreaWrapper}>
+          {useRoomStore.getState().activeSession && (
+            <div className={styles.chatTopTimer}>
+              <span className={styles.chatTopTimerLabel}>Active Session:</span>
+              <SessionTimer startedAt={useRoomStore.getState().activeSession!.startedAt} />
+            </div>
+          )}
+          <ChatPanel sendMessage={sendMessage} />
+        </div>
       </div>
     </div>
   );

@@ -9,12 +9,14 @@ interface SessionPanelProps {
   roomId: string;
   startSession: () => void;
   endSession: () => void;
+  showTimer?: boolean;
 }
 
 export const SessionPanel: React.FC<SessionPanelProps> = ({
   roomId,
   startSession,
   endSession,
+  showTimer = true,
 }) => {
   const activeSession = useRoomStore((state) => state.activeSession);
   const sessionsHistory = useRoomStore((state) => state.sessionsHistory);
@@ -64,13 +66,13 @@ export const SessionPanel: React.FC<SessionPanelProps> = ({
   };
 
   return (
-    <aside className={styles.rightPanel} aria-label="Session stats and controls">
+    <aside className={styles.sidebarSection} aria-label="Session stats and controls">
       <div className={styles.sessionControlSection}>
         <span className={styles.panelSubtitle}>current session</span>
 
         {activeSession ? (
           <div className={styles.activeSessionArea}>
-            <SessionTimer startedAt={activeSession.startedAt} />
+            {showTimer && <SessionTimer startedAt={activeSession.startedAt} />}
             <button
               type="button"
               onClick={endSession}
