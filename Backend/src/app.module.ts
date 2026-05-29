@@ -29,9 +29,6 @@ import { GatewayModule } from './gateway/gateway.module';
         ssl: {
           rejectUnauthorized: false,
         },
-        extra: {
-          family: 4, // Force IPv4 — Render cannot reach Supabase over IPv6
-        },
       }),
     }),
     RedisModule,
